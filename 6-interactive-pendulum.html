@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactieve Slinger</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .canvas-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            background: linear-gradient(to bottom, #e8f4f8 0%, #f0f8fc 100%);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        canvas {
+            border: 2px solid #333;
+            border-radius: 5px;
+            background: white;
+            max-width: 100%;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .control-group {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #fa709a;
+        }
+        .control-group label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+        }
+        .value-display {
+            color: #fa709a;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background: #fa709a;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #fee140;
+            color: #333;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Interactieve Slinger</h1>
+        
+        <div class="buttons">
+            <button onclick="reset()">🔄 Reset</button>
+            <button onclick="togglePause()">⏸️ Pauze/Afspelen</button>
+        </div>
+
+        <div class="canvas-wrapper">
+            <canvas id="canvas" width="600" height="400"></canvas>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="length">Slingerlengte</label>
+                <input type="range" id="length" min="50" max="300" value="150">
+                <div class="value-display" id="lengthValue">150px</div>
+            </div>
+            <div class="control-group">
+                <label for="gravity">Zwaartekracht</label>
+                <input type="range" id="gravity" min="1" max="15" value="9.8">
+                <div class="value-display" id="gravityValue">9.8</div>
+            </div>
+            <div class="control-group">
+                <label for="damping">Demping</label>
+                <input type="range" id="damping" min="0" max="0.1" step="0.01" value="0.01">
+                <div class="value-display" id="dampingValue">0.01</div>
+            </div>
+            <div class="control-group">
+                <label for="mass">Massa</label>
+                <input type="range" id="mass" min="5" max="50" value="20">
+                <div class="value-display" id="massValue">20</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let length = 150;
+        let gravity = 9.8;
+        let damping = 0.01;
+        let mass = 20;
+        let isPaused = false;
+        let angle = Math.PI / 4;
+        let angularVelocity = 0;
+
+        const pivotX = canvas.width / 2;
+        const pivotY = 50;
+
+        document.getElementById('length').addEventListener('input', (e) => {
+            length = e.target.value;
+            document.getElementById('lengthValue').textContent = length + 'px';
+        });
+
+        document.getElementById('gravity').addEventListener('input', (e) => {
+            gravity = e.target.value;
+            document.getElementById('gravityValue').textContent = gravity;
+        });
+
+        document.getElementById('damping').addEventListener('input', (e) => {
+            damping = e.target.value;
+            document.getElementById('dampingValue').textContent = damping;
+        });
+
+        document.getElementById('mass').addEventListener('input', (e) => {
+            mass = e.target.value;
+            document.getElementById('massValue').textContent = mass;
+        });
+
+        function reset() {
+            angle = Math.PI / 4;
+            angularVelocity = 0;
+            isPaused = false;
+        }
+
+        function togglePause() {
+            isPaused = !isPaused;
+        }
+
+        function update() {
+            if (!isPaused) {
+                const angularAcceleration = -gravity / length * Math.sin(angle) - damping * angularVelocity;
+                angularVelocity += angularAcceleration * 0.016;
+                angle += angularVelocity * 0.016;
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#f0f8fc';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#333';
+            ctx.beginPath();
+            ctx.arc(pivotX, pivotY, 8, 0, Math.PI * 2);
+            ctx.fill();
+
+            const ballX = pivotX + length * Math.sin(angle);
+            const ballY = pivotY + length * Math.cos(angle);
+
+            ctx.strokeStyle = '#666';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(pivotX, pivotY);
+            ctx.lineTo(ballX, ballY);
+            ctx.stroke();
+
+            ctx.fillStyle = '#fa709a';
+            ctx.beginPath();
+            ctx.arc(ballX, ballY, mass / 2, 0, Math.PI * 2);
+            ctx.fill();
+
+            const velocity = Math.abs(angularVelocity);
+            const vx = -length * angularVelocity * Math.cos(angle);
+            const vy = length * angularVelocity * Math.sin(angle);
+
+            ctx.strokeStyle = '#fee140';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(ballX, ballY);
+            ctx.lineTo(ballX + vx, ballY + vy);
+            ctx.stroke();
+
+            const potentialEnergy = gravity * length * (1 - Math.cos(angle));
+            const kineticEnergy = 0.5 * angularVelocity * angularVelocity * length;
+            const totalEnergy = potentialEnergy + kineticEnergy;
+
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText(`Hoek: ${(angle * 180 / Math.PI).toFixed(1)}°`, 10, 30);
+            ctx.fillText(`Energie: ${(totalEnergy * 100).toFixed(1)}`, 10, 50);
+        }
+
+        function animate() {
+            update();
+            draw();
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>

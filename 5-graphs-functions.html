@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Functiegrafieken</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .canvas-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        canvas {
+            border: 3px solid #38f9d7;
+            border-radius: 10px;
+            background: #f8f9fa;
+            max-width: 100%;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .control-group {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #38f9d7;
+        }
+        .control-group label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+        }
+        .value-display {
+            color: #43e97b;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .function-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background: #38f9d7;
+            color: #333;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #43e97b;
+            transform: translateY(-2px);
+        }
+        button.active {
+            background: #43e97b;
+            box-shadow: 0 4px 12px rgba(67, 233, 123, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Functiegrafieken</h1>
+        
+        <div class="function-buttons">
+            <button class="active" onclick="setFunction('linear')">📈 Lineair</button>
+            <button onclick="setFunction('quadratic')">∩ Kwadratisch</button>
+            <button onclick="setFunction('cubic')">〰️ Kubisch</button>
+            <button onclick="setFunction('exponential')">📈 Exponentieel</button>
+            <button onclick="setFunction('logarithmic')">📉 Logaritmisch</button>
+            <button onclick="setFunction('absolute')">V Absolute waarde</button>
+        </div>
+
+        <div class="canvas-wrapper">
+            <canvas id="canvas" width="700" height="500"></canvas>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="paramA">Parameter A</label>
+                <input type="range" id="paramA" min="-5" max="5" step="0.1" value="1">
+                <div class="value-display" id="paramAValue">1</div>
+            </div>
+            <div class="control-group">
+                <label for="paramB">Parameter B</label>
+                <input type="range" id="paramB" min="-10" max="10" step="0.5" value="0">
+                <div class="value-display" id="paramBValue">0</div>
+            </div>
+            <div class="control-group">
+                <label for="paramC">Parameter C</label>
+                <input type="range" id="paramC" min="-10" max="10" step="0.5" value="0">
+                <div class="value-display" id="paramCValue">0</div>
+            </div>
+            <div class="control-group">
+                <label for="zoom">Zoom</label>
+                <input type="range" id="zoom" min="0.5" max="3" step="0.1" value="1">
+                <div class="value-display" id="zoomValue">1x</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let currentFunction = 'linear';
+        let paramA = 1;
+        let paramB = 0;
+        let paramC = 0;
+        let zoom = 1;
+
+        document.getElementById('paramA').addEventListener('input', (e) => {
+            paramA = e.target.value;
+            document.getElementById('paramAValue').textContent = paramA;
+            draw();
+        });
+
+        document.getElementById('paramB').addEventListener('input', (e) => {
+            paramB = e.target.value;
+            document.getElementById('paramBValue').textContent = paramB;
+            draw();
+        });
+
+        document.getElementById('paramC').addEventListener('input', (e) => {
+            paramC = e.target.value;
+            document.getElementById('paramCValue').textContent = paramC;
+            draw();
+        });
+
+        document.getElementById('zoom').addEventListener('input', (e) => {
+            zoom = e.target.value;
+            document.getElementById('zoomValue').textContent = zoom + 'x';
+            draw();
+        });
+
+        function setFunction(func) {
+            currentFunction = func;
+            document.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            draw();
+        }
+
+        function evaluate(x) {
+            const a = parseFloat(paramA);
+            const b = parseFloat(paramB);
+            const c = parseFloat(paramC);
+
+            switch (currentFunction) {
+                case 'linear':
+                    return a * x + b;
+                case 'quadratic':
+                    return a * x * x + b * x + c;
+                case 'cubic':
+                    return a * x * x * x + b * x + c;
+                case 'exponential':
+                    return a * Math.pow(2, x) + c;
+                case 'logarithmic':
+                    return x > 0 ? a * Math.log(x) + b : NaN;
+                case 'absolute':
+                    return a * Math.abs(x) + b;
+                default:
+                    return 0;
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const scale = 40 * zoom;
+
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 1;
+            for (let i = -10; i <= 10; i++) {
+                ctx.beginPath();
+                ctx.moveTo(centerX + i * scale, 0);
+                ctx.lineTo(centerX + i * scale, canvas.height);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(0, centerY + i * scale);
+                ctx.lineTo(canvas.width, centerY + i * scale);
+                ctx.stroke();
+            }
+
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(centerX, 0);
+            ctx.lineTo(centerX, canvas.height);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(0, centerY);
+            ctx.lineTo(canvas.width, centerY);
+            ctx.stroke();
+
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 12px Arial';
+            ctx.textAlign = 'center';
+            for (let i = -5; i <= 5; i++) {
+                if (i !== 0) {
+                    ctx.fillText(i, centerX + i * scale, centerY + 15);
+                    ctx.fillText(i, centerX - 15, centerY - i * scale + 5);
+                }
+            }
+            ctx.fillText('0', centerX - 10, centerY + 15);
+
+            ctx.strokeStyle = '#43e97b';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            let started = false;
+
+            for (let px = 0; px < canvas.width; px += 2) {
+                const x = (px - centerX) / scale;
+                const y = evaluate(x);
+
+                if (isNaN(y) || !isFinite(y)) {
+                    started = false;
+                    continue;
+                }
+
+                const py = centerY - y * scale;
+
+                if (py > -50 && py < canvas.height + 50) {
+                    if (!started) {
+                        ctx.moveTo(px, py);
+                        started = true;
+                    } else {
+                        ctx.lineTo(px, py);
+                    }
+                }
+            }
+            ctx.stroke();
+        }
+
+        draw();
+    </script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactieve Template - Wiskundevisualisaties</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        .card-header {
+            padding: 20px;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .card-body {
+            padding: 20px;
+            color: #333;
+        }
+        .card-body p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        .card a {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        .card a:hover {
+            transform: scale(1.05);
+        }
+        .color-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .color-2 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .color-3 { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+        .color-4 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .color-5 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .color-6 { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>✨ Interactieve Template</h1>
+            <p>Leer wiskunde door interactieve visualisaties!</p>
+        </header>
+
+        <div class="grid">
+            <div class="card">
+                <div class="card-header color-1">📐 Geometrische Vormen</div>
+                <div class="card-body">
+                    <p>Ontdek cirkels, vierkanten, driehoeken en meer. Manipuleer rotatie, schaal en symmetrie in real-time.</p>
+                    <a href="1-geometry-shapes.html">→ Open</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header color-2">〰️ Golfbeweging</div>
+                <div class="card-body">
+                    <p>Visualiseer sinus, cosinus en andere golffuncties met interactieve parameters zoals amplitude en frequentie.</p>
+                    <a href="2-waves-animations.html">→ Open</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header color-3">🌀 Fractals</div>
+                <div class="card-body">
+                    <p>Ontdek de schoonheid van Mandelbrot sets, Julia sets en Sierpinski driehoeken met zoomfunctionaliteit.</p>
+                    <a href="3-fractals.html">→ Open</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header color-4">🎯 Projectielbeweging</div>
+                <div class="card-body">
+                    <p>Simuleer fysische beweging van projectielen. Pas hoek, snelheid en zwaartekracht aan voor experimenten.</p>
+                    <a href="4-physics-projectile.html">→ Open</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header color-5">📊 Functiegrafieken</div>
+                <div class="card-body">
+                    <p>Plot lineaire, kwadratische, exponentiële en logaritmische functies. Pas parameters real-time aan.</p>
+                    <a href="5-graphs-functions.html">→ Open</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header color-6">🔄 Interactieve Slinger</div>
+                <div class="card-body">
+                    <p>Onderzoek pendulumbewegingen en leer over oscillatie, demping en energie behoud.</p>
+                    <a href="6-interactive-pendulum.html">→ Open</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
